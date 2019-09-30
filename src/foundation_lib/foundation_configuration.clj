@@ -40,21 +40,42 @@
 
 (s/def ::version string?)
 
-(s/def ::endpoint string?)
+(s/def ::pivnet-file-glob string?)
 
-(s/def ::bucket string?)
+(s/def ::pivnet-api-token string?)
 
-(s/def ::file string?)
+(s/def ::pivnet-disable-ssl boolean?)
 
-(s/def ::access_key_id string?)
+(s/def ::s3-access-key-id string?)
 
-(s/def ::secret_access_key string?)
+(s/def ::s3-auth-type #{"accesskey" "iam"})
 
-(s/def ::source (s/keys :req-un [::endpoint
-                                 ::bucket
-                                 ::file
-                                 ::access_key_id
-                                 ::secret_access_key]))
+(s/def ::s3-bucket string?)
+
+(s/def ::s3-disable-ssl boolean?)
+
+(s/def ::s3-enable-v2-signing boolean?)
+
+(s/def ::s3-endpoint string?)
+
+(s/def ::s3-product-path string?)
+
+(s/def ::s3-region-name string?)
+
+(s/def ::s3-secret-access-key string?)
+
+(s/def ::source (s/keys :req-un [::pivnet-file-glob]
+                        :opt-un [::pivnet-api-token
+                                 ::pivnet-disable-ssl
+                                 ::s3-access-key-id
+                                 ::s3-auth-type
+                                 ::s3-bucket
+                                 ::s3-disable-ssl
+                                 ::s3-enable-v2-signing
+                                 ::s3-endpoint
+                                 ::s3-product-path
+                                 ::s3-region-name
+                                 ::s3-secret-access-key]))
 
 (s/def ::product-properties map?)
 
