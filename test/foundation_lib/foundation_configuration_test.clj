@@ -3,19 +3,77 @@
             [clojure.spec.test.alpha :as stest]
             [foundation-lib.foundation-configuration :as foundation]))
 
-(deftest requires-changes?
-  (stest/instrument `foundation/requires-changes?)
+(deftest director-requires-changes?
+  (stest/instrument `foundation/director-requires-changes?)
 
   (testing "when what is desired is more precise than what is deployed"
-    (is (foundation/requires-changes? {:a 1} {:a 1 :b 2})))
+    (is (foundation/director-requires-changes? {:properties-configuration {:director_configuration {:a 1}}}
+                                               {:properties-configuration {:director_configuration {:a 1 :b 2}}})))
 
   (testing "when the desired is less precise than what is deployed"
-    (is (not (foundation/requires-changes? {:a 1 :b 2} {:a 1}))))
+    (is (not (foundation/director-requires-changes? {:properties-configuration {:director_configuration {:a 1 :b 2}}}
+                                                    {:properties-configuration {:director_configuration {:a 1}}}))))
 
   (testing "responds reasonably for nil args"
-    (is (foundation/requires-changes? nil 1))
-    (is (foundation/requires-changes? 1 nil))
-    (is (not (foundation/requires-changes? nil nil)))))
+    (is (foundation/director-requires-changes? {:properties-configuration {:director_configuration {:a nil}}}
+                                               {:properties-configuration {:director_configuration {:a 1}}}))
+    (is (foundation/director-requires-changes? {:properties-configuration {:director_configuration {:a 1}}}
+                                               {:properties-configuration {:director_configuration {:a nil}}}))
+    (is (not (foundation/director-requires-changes? {:properties-configuration {:director_configuration {:a nil}}}
+                                                    {:properties-configuration {:director_configuration {:a nil}}})))))
+
+(deftest product-requires-changes?
+  (stest/instrument `foundation/product-requires-changes?)
+
+  (testing "when a property changes"
+    (is (foundation/product-requires-changes? {:product-name "cf"
+                                               :version "1.0.0"
+                                               :product-properties {:a 1}}
+                                              {:product-name "cf"
+                                               :version "1.0.0"
+                                               :source {:pivnet-file-glob "*.pivotal"}
+                                               :product-properties {:a 2}})))
+
+  (testing "when what is desired is more precise than what is deployed"
+    (is (foundation/product-requires-changes? {:product-name "cf"
+                                               :version "1.0.0"
+                                               :product-properties {:a 1}}
+                                              {:product-name "cf"
+                                               :version "1.0.0"
+                                               :source {:pivnet-file-glob "*.pivotal"}
+                                               :product-properties {:a 1 :b 2}})))
+
+  (testing "when the desired is less precise than what is deployed"
+    (is (not (foundation/product-requires-changes? {:product-name "cf"
+                                                    :version "1.0.0"
+                                                    :product-properties {:a 1 :b 2}}
+                                                   {:product-name "cf"
+                                                    :version "1.0.0"
+                                                    :source {:pivnet-file-glob "*.pivotal"}
+                                                    :product-properties {:a 1}}))))
+
+  (testing "responds reasonably for nil args"
+    (is (foundation/product-requires-changes? {:product-name "cf"
+                                               :version "1.0.0"
+                                               :product-properties {:a nil}}
+                                              {:product-name "cf"
+                                               :version "1.0.0"
+                                               :source {:pivnet-file-glob "*.pivotal"}
+                                               :product-properties {:a 1}}))
+    (is (foundation/product-requires-changes? {:product-name "cf"
+                                               :version "1.0.0"
+                                               :product-properties {:a 1}}
+                                              {:product-name "cf"
+                                               :version "1.0.0"
+                                               :source {:pivnet-file-glob "*.pivotal"}
+                                               :product-properties {:a nil}}))
+    (is (not (foundation/product-requires-changes? {:product-name "cf"
+                                                    :version "1.0.0"
+                                                    :product-properties {:a nil}}
+                                                   {:product-name "cf"
+                                                    :version "1.0.0"
+                                                    :source {:pivnet-file-glob "*.pivotal"}
+                                                    :product-properties {:a nil}})))))
 
 (deftest select-writable-config
   (is (= {:director-config

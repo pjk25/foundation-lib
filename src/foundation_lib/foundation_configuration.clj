@@ -91,21 +91,31 @@
 
 (s/def ::errand-config map?)
 
-(s/def ::product-config (s/keys :req-un [::product-name ::version]
-                                :opt-un [::source
-                                         ::product-properties
-                                         ::network-properties
-                                         ::resource-config
-                                         ::errand-config]))
+(s/def ::deployed-product-config (s/keys :req-un [::product-name
+                                                  ::version]
+                                         :opt-un [::product-properties
+                                                  ::network-properties
+                                                  ::resource-config
+                                                  ::errand-config]))
 
-(s/def ::products (s/coll-of ::product-config :distinct true :into #{}))
+(s/def ::desired-product-config (s/keys :req-un [::product-name
+                                                 ::version
+                                                 ::source]
+                                        :opt-un [::product-properties
+                                                 ::network-properties
+                                                 ::resource-config
+                                                 ::errand-config]))
+
+(s/def ::deployed-products (s/coll-of ::deployed-product-config :distinct true :into #{}))
+
+(s/def ::desired-products (s/coll-of ::desired-product-config :distinct true :into #{}))
 
 (s/def ::opsman-version string?)
 
 (s/def ::deployed-config (s/keys :req-un [::opsman-version]
-                                 :opt-un [::director-config ::products]))
+                                 :opt-un [::director-config ::deployed-products]))
 
-(s/def ::desired-config (s/keys :opt-un [::opsman-version ::director-config ::products]))
+(s/def ::desired-config (s/keys :opt-un [::opsman-version ::director-config ::desired-products]))
 
 (defn first-difference
   ([l r] (first-difference l r []))
@@ -118,12 +128,24 @@
                                               (some #(first-difference %1 %2 (conj rpath %3)) l r (range)))
      :else {:l l :r r :path rpath})))
 
-(defn requires-changes?
+(defn director-requires-changes?
   [deployed desired]
   (not (= (util/select desired deployed) desired)))
 
-(s/fdef requires-changes?
-        :args (s/cat :deployed any? :desired any?)
+(s/fdef director-requires-changes?
+        :args (s/cat :deployed ::director-config
+                     :desired ::director-config)
+        :ret boolean?)
+
+(defn product-requires-changes?
+  [deployed desired]
+  (let [convergable-properties (util/only-specd ::deployed-product-config desired)
+        deployed-with-floating-values-excluded (util/select convergable-properties deployed)]
+    (not (= convergable-properties deployed-with-floating-values-excluded))))
+
+(s/fdef product-requires-changes?
+        :args (s/cat :deployed ::deployed-product-config
+                     :desired ::desired-product-config)
         :ret boolean?)
 
 (defn select-writable-config
