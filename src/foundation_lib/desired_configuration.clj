@@ -58,10 +58,6 @@
 
 (s/def ::products (s/coll-of ::desired-product-config :distinct true :into #{}))
 
-(s/def ::deployed-config (s/keys :req-un [::configuration/opsman-version]
-                                 :opt-un [::configuration/director-config
-                                          ::products]))
-
 (s/def ::desired-config (s/keys :opt-un [::configuration/opsman-version
                                          ::configuration/director-config
-                                         ::desired-products]))
+                                         ::products]))

@@ -14,4 +14,5 @@
 (s/def ::products (s/coll-of ::deployed-product-config :distinct true :into #{}))
 
 (s/def ::deployed-config (s/keys :req-un [::configuration/opsman-version]
-                                 :opt-un [::configuration/director-config ::products]))
+                                 :opt-un [::configuration/director-config
+                                          ::products]))
