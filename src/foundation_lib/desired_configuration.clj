@@ -49,9 +49,9 @@
                                  ::s3-secret-access-key]))
 
 (s/def ::desired-product-config (s/keys :req-un [::configuration/product-name
-                                                 ::configuration/version
-                                                 ::source]
-                                        :opt-un [::configuration/product-properties
+                                                 ::configuration/version]
+                                        :opt-un [::source
+                                                 ::configuration/product-properties
                                                  ::configuration/network-properties
                                                  ::configuration/resource-config
                                                  ::configuration/errand-config]))
