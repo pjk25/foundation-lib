@@ -7,6 +7,8 @@
 
 (s/def ::pivnet-file-glob string?)
 
+(s/def ::pivnet-product-slug string?)
+
 (s/def ::blobstore-bucket string?)
 
 (s/def ::blobstore-product-path string?)
@@ -34,7 +36,8 @@
 (s/def ::s3-secret-access-key string?)
 
 (s/def ::source (s/keys :req-un [::pivnet-file-glob]
-                        :opt-un [::blobstore-bucket
+                        :opt-un [::pivnet-product-slug
+                                 ::blobstore-bucket
                                  ::blobstore-product-path
                                  ::gcs-project-id
                                  ::gcs-service-account-json
