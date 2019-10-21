@@ -4,8 +4,14 @@
             [clojure.pprint :refer [pprint]]
             [foundation-lib.configuration :as configuration]))
 
+(s/def ::stemcell (s/keys :req-un [::configuration/version
+                                   ::configuration/os]))
+
+(s/def ::stemcells (s/coll-of ::stemcell :distinct true :into #{}))
+
 (s/def ::deployed-product-config (s/keys :req-un [::configuration/product-name
-                                                  ::configuration/version]
+                                                  ::configuration/version
+                                                  ::stemcells]
                                          :opt-un [::configuration/product-properties
                                                   ::configuration/network-properties
                                                   ::configuration/resource-config

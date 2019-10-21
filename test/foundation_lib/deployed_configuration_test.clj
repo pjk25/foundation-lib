@@ -9,5 +9,7 @@
     (is (s/valid? ::deployed-configuration/deployed-config
                   {:opsman-version "2.5.4"
                    :director-config {:properties-configuration {:director_configuration {:foo 1}}}
-                   :productss [{:product-name "cf"
-                                :version "1.0.0"}]}))))
+                   :products [{:product-name "cf"
+                               :version "1.0.0"
+                               :stemcells [{:version "250.48"
+                                            :os "ubuntu-xenial"}]}]}))))

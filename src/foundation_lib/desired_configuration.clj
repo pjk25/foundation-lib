@@ -51,8 +51,15 @@
                                  ::s3-region-name
                                  ::s3-secret-access-key]))
 
+(s/def ::stemcell (s/keys :req-un [::configuration/version
+                                   ::configuration/os]
+                          :opt-un [::source]))
+
+(s/def ::stemcells (s/coll-of ::stemcell :distinct true :into #{}))
+
 (s/def ::desired-product-config (s/keys :req-un [::configuration/product-name
-                                                 ::configuration/version]
+                                                 ::configuration/version
+                                                 ::stemcells]
                                         :opt-un [::source
                                                  ::configuration/product-properties
                                                  ::configuration/network-properties

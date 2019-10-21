@@ -11,4 +11,7 @@
                    :director-config {:properties-configuration {:director_configuration {:foo 1}}}
                    :products [{:product-name "cf"
                                :version "1.0.0"
-                               :source {:pivnet-file-glob "*.pivotal"}}]}))))
+                               :source {:pivnet-file-glob "*.pivotal"}
+                               :stemcells [{:version "250.48"
+                                            :os "ubuntu-xenial"
+                                            :source {:pivnet-file-glob "*google*"}}]}]}))))

@@ -48,3 +48,5 @@
 (s/def ::errand-config map?)
 
 (s/def ::opsman-version string?)
+
+(s/def ::os string?)
