@@ -8,7 +8,12 @@
 
 (s/def ::baz int?)
 
-(s/def ::bar (s/coll-of (s/keys :opt [::baz]) :distinct true))
+(s/def ::bar (s/coll-of (s/keys :opt [::baz])
+                        :distinct true))
+
+(s/def ::fizz (s/coll-of ::foo
+                         :distinct true
+                         :into #{}))
 
 (s/def ::fuzz map?)
 
@@ -24,6 +29,9 @@
                                    :extra "extra-val"})
          {::foo "foostr"
           :bar [{::baz 123}]}))
+
+  (is (= (util/only-specd ::fizz #{"foostr" "barstr"})
+         #{"foostr" "barstr"}))
 
   (is (= (util/only-specd ::a-map {::foo "foostr"
                                    :extra "extra-val"})

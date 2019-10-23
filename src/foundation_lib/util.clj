@@ -23,7 +23,11 @@
                                                 %1))
                                            {}
                                            (concat req-un opt-un))))
-      [(['coll-of i & _] :seq)] (map #(only-specd i %) x)
+      [(['coll-of i & r] :seq)] (let [opts (apply hash-map r)
+                                      mapped (map #(only-specd i %) x)]
+                                  (match [opts]
+                                    [{:into t}] (into t mapped)
+                                    :else mapped))
       :else x)))
 
 (s/fdef only-specd

@@ -29,101 +29,93 @@
     (is (query/product-requires-changes? {:product-name "cf"
                                           :version "1.0.0"
                                           :product-properties {:a 1}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]}
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}}
                                          {:product-name "cf"
                                           :version "1.0.0"
                                           :source {:pivnet-file-glob "*.pivotal"}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}
                                           :product-properties {:a 2}})))
 
   (testing "when what is desired is more precise than what is deployed"
     (is (query/product-requires-changes? {:product-name "cf"
                                           :version "1.0.0"
                                           :product-properties {:a 1}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]}
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}}
                                          {:product-name "cf"
                                           :version "1.0.0"
                                           :source {:pivnet-file-glob "*.pivotal"}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}
                                           :product-properties {:a 1 :b 2}})))
 
   (testing "when the desired is less precise than what is deployed"
     (is (not (query/product-requires-changes? {:product-name "cf"
                                                :version "1.0.0"
                                                :product-properties {:a 1 :b 2}
-                                               :stemcells [{:version "100.1"
-                                                            :os "ubuntu-xenial"}]}
+                                               :stemcells #{{:version "100.1"
+                                                             :os "ubuntu-xenial"}}}
                                               {:product-name "cf"
                                                :version "1.0.0"
                                                :source {:pivnet-file-glob "*.pivotal"}
-                                               :stemcells [{:version "100.1"
-                                                            :os "ubuntu-xenial"}]
+                                               :stemcells #{{:version "100.1"
+                                                             :os "ubuntu-xenial"}}
                                                :product-properties {:a 1}}))))
 
   (testing "reacts to a new stemcell version"
     (is (query/product-requires-changes? {:product-name "cf"
                                           :version "1.0.0"
                                           :product-properties {:a 1}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]}
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}}
                                          {:product-name "cf"
                                           :version "1.0.0"
                                           :source {:pivnet-file-glob "*.pivotal"}
-                                          :stemcells [{:version "100.2"
-                                                       :os "ubuntu-xenial"
-                                                       :source {:pivnet-file-glob "*google*"}}]
+                                          :stemcells #{{:version "100.2"
+                                                        :os "ubuntu-xenial"
+                                                        :source {:pivnet-file-glob "*google*"}}}
                                           :product-properties {:a 1}})))
 
   (testing "responds reasonably for nil args"
     (is (query/product-requires-changes? {:product-name "cf"
                                           :version "1.0.0"
                                           :product-properties {:a nil}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]}
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}}
                                          {:product-name "cf"
                                           :version "1.0.0"
                                           :source {:pivnet-file-glob "*.pivotal"}
                                           :product-properties {:a 1}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]}))
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}}))
     (is (query/product-requires-changes? {:product-name "cf"
                                           :version "1.0.0"
                                           :product-properties {:a 1}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]}
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}}
                                          {:product-name "cf"
                                           :version "1.0.0"
                                           :source {:pivnet-file-glob "*.pivotal"}
-                                          :stemcells [{:version "100.1"
-                                                       :os "ubuntu-xenial"}]
+                                          :stemcells #{{:version "100.1"
+                                                        :os "ubuntu-xenial"}}
                                           :product-properties {:a nil}}))
     (is (not (query/product-requires-changes? {:product-name "cf"
                                                :version "1.0.0"
-                                               :product-properties {:a nil}
-                                               :stemcells [{:version "100.1"
-                                                            :os "ubuntu-xenial"}]}
+                                               :stemcells #{{:version "100.1"
+                                                             :os "ubuntu-xenial"}}}
                                               {:product-name "cf"
                                                :version "1.0.0"
                                                :source {:pivnet-file-glob "*.pivotal"}
-                                               :stemcells [{:version "100.1"
-                                                            :os "ubuntu-xenial"
-                                                            :source {:pivnet-file-glob "*google*"}}]
-                                               :product-properties {:a nil}})))))
+                                               :stemcells #{{:version "100.1"
+                                                             :os "ubuntu-xenial"
+                                                             :source {:pivnet-file-glob "*google*"}}}})))))
 
 (deftest select-writable-config
-  (is (= {:director-config
-          {:az-configuration
-           [{:name "foo-az"}]}}
-         (query/select-writable-config {:director-config
+  (is (= (query/select-writable-config {:director-config
                                         {:az-configuration
-                                         [{:name "foo-az" :iaas_configuration_guid "foo-guid"}]}}))))
-
-(comment
-  (deftest hash-of
-    (is (= 1 (-> (stest/check `query/hash-of {:num-tests 10})
-                 (stest/summarize-results)
-                 :check-passed)))))
+                                         [{:name "foo-az" :iaas_configuration_guid "foo-guid"}]}})
+         {:director-config
+          {:az-configuration
+           #{{:name "foo-az"}}}})))
