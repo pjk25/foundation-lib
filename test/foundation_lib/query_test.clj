@@ -110,7 +110,8 @@
                                                :version "1.0.0"
                                                :source {:pivnet-file-glob "*.pivotal"}
                                                :stemcells [{:version "100.1"
-                                                            :os "ubuntu-xenial"}]
+                                                            :os "ubuntu-xenial"
+                                                            :source {:pivnet-file-glob "*google*"}}]
                                                :product-properties {:a nil}})))))
 
 (deftest select-writable-config
